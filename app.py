@@ -28,7 +28,9 @@ def chat():
             messages.append({"role": "system", "content": c});
     openaidata = {"model": "gpt-3.5-turbo", "messages": messages}
     try:
-        req = requests.post('https://api.openai.com/v1/chat/completions', headers={'Content-Type': 'application/json', 'Authorization': 'Bearer sk-API KEI'}, json=openaidata, timeout=90)
+        key = open(root_dir + '/key.ini').read().strip()
+        url = 'https://api.openai.com/v1/chat/completions'
+        req = requests.post(url, headers={'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key}, json=openaidata, timeout=90)
         res = req.text
         res = json.loads(res)
         res = res['choices'][0]['message']['content'].strip()
