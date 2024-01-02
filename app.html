@@ -7,7 +7,7 @@
 	<style>
                 html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
                 .container { width: 90%; margin: 0 auto; height: 100%; font-size: 16px; }
-                .chatcontents { width: 100%; height: calc(100% - 60px); min-height: calc(100% - 60px); max-height: calc(100% - 60px); overflow: scroll; padding: 5px 0 5px 0; }
+                .chatcontents { width: 100%; height: calc(100% - 60px - 36px); min-height: calc(100% - 60px - 36px); max-height: calc(100% - 60px - 36px); overflow: scroll; padding: 5px 0 5px 0; }
                 .chatcontents::-webkit-scrollbar { display: none; }
                 .chatcontentline { display: flow-root; position: relative; padding-bottom: 30px; }
                 .chatcontent { max-width: 80%; box-shadow: 0 0 5px grey; margin: 5px; padding: 5px; border-radius: 5px; word-break: break-all; white-space: pre-wrap; line-height: 20px; }
@@ -15,7 +15,8 @@
                 .chatcontent.you { float: left; background: aliceblue; }
                 .chatcontent.me { float: right; }
                 .chatcontentcopy { position: absolute; bottom: 0; width: 30px; height: 30px; line-height: 30px; cursor: pointer; text-align: center; }
-                .loading { display: none; font-size: 0; width: 40px; height: 32px; color: lightgray; margin: 4px; }
+                .navbar { width: calc(100% - 8px); height: 32px; line-height: 32px; margin: 4px; text-align: center; }
+                .loading { display: none; font-size: 0; width: 40px; height: 32px; color: lightgray; margin: 0 auto; }
                 .loading, .loading > div { position: relative; box-sizing: border-box; }
                 .loading > div { display: inline-block; float: none; background-color: currentColor; border: 0 solid currentColor; }
                 .loading > div { width: 4px; height: 32px; margin: 2px; margin-top: 0; margin-bottom: 0; border-radius: 0; animation: line-scale 1.2s infinite ease; }
@@ -40,41 +41,110 @@
                         transform: scaleY(1);
                     }
                 }
+                .help-btn, .donation-btn { width: 16px; height: 16px; line-height: 16px; border: 1px solid grey; border-radius: 8px; color: grey; text-align: center; margin-top: 7px; cursor: pointer; }
+                .help-btn { float: left; }
+                .donation-btn { float: right; }
                 .chatform { width: calc(100% - 10px); height: 30px; min-height: 30px; max-height: 30px; line-height: 30px; box-shadow: 0 0 5px grey; margin: 10px 5px 10px 5px; border-radius: 5px; }
                 .chatform .content { width: 100%; border: 0; height: 30px; line-height: 30px; box-sizing: border-box; outline: none; font-size: 16px; border-radius: 5px; /*padding-right: 30px;*/ }
                 .chatform .send { border: 0; display: none; position: absolute; background: none; margin-left: -30px; width: 30px; height: 30px; line-height: 30px; cursor: pointer; box-sizing: border-box; outline: none; font-size: 16px; }
+                .help, .donation { width: calc(90% - 8px); height: calc(100% - 60px - 36px); position: fixed; top: 10px; margin: -4px 4px -4px 4px; text-align: center; box-shadow: 0 0 5px grey; border-radius: 5px; background: white; overflow: hidden; }
+                .donation { display: none; }
+                .close-btn { width: 32px; height: 32px; line-height: 32px; color: grey; text-align: center; cursor: pointer; position: absolute; top: 0; right: 0; }
+                .help .tip-line { display: flow-root; position: relative; padding: 32px 32px 0 32px; }
+                .help .tip { max-width: 100%; box-shadow: 0 0 5px grey; margin: 5px; padding: 5px; border-radius: 5px; word-break: break-all; white-space: pre-wrap; line-height: 20px; float: left; cursor: pointer; }
+                .donation .code { width: 100%; height: 70%; background-image: url(static/wxalipay-s.png); background-repeat: no-repeat; background-position: center center; background-size: contain; }
+                .donation .link { width: 100%; height: 30%; display: flex; align-items: center; justify-content: center; }
+                .donation .link a { text-decoration: none; border: 1px solid grey; border-radius: 5px; padding: 5px; color: blue; }
 	</style>
 </head>
 <body>
 <div class="container">
     <div class="chatcontents"></div>
-    <div class="loading">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="navbar">
+        <div class="help-btn">?</div>
+        <div class="loading">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="donation-btn">$</div>
     </div>
     <div class="chatform">
         <input class="content" type="text" enterkeyhint="send" />
         <input class="send" type="button" value="➤" />
+    </div>
+    <div class="help">
+        <div class="tips">
+            <div class="tip-line"><div class="tip">你是谁？</div></div>
+            <div class="tip-line"><div class="tip">What is the Turing test?</div></div>
+            <div class="tip-line"><div class="tip">请写一首关于秋天的小诗。</div></div>
+            <div class="tip-line"><div class="tip">推荐几首民谣。</div></div>
+            <div class="tip-line"><div class="tip">Tell me some funny jokes.</div></div>
+        </div>
+        <div class="close-btn">x</div>
+    </div>
+    <div class="donation">
+        <div class="code"></div>
+        <div class="link">PayPal: <a href="https://paypal.me/lostab" target="_blank">https://paypal.me/lostab</a></div>
+        <div class="close-btn">x</div>
     </div>
 </div>
 <script src="static/showdown.min.js"></script>
 <script>
     var reqcnt = 0;
     var precontents = new Array();
+    var addcopybtn = function(chatcontent, chatcontentline, position) {
+        var chatcontentcopy = document.createElement("div");
+        chatcontentcopy.className = "chatcontentcopy";
+        if (position == "right") {
+            chatcontentcopy.style.right = 0;
+        }
+        chatcontentcopy.innerHTML = "📋";
+        chatcontentcopy.addEventListener("click", function(){
+            var copycontent = chatcontent.innerText.replace(/[\r\n]+/g, "\n").trim();
+            if (navigator.clipboard && navigator.permissions) {
+                navigator.permissions.query({name: "clipboard-write"}).then((result) => {
+                    if (result.state == "granted") {
+                        navigator.clipboard.writeText(copycontent);
+                    } else {
+                        var copyarea = document.createElement("textarea");
+                        copyarea.style.width = 0;
+                        copyarea.style.height = 0;
+                        copyarea.value = copycontent;
+                        copyarea.setAttribute("readonly", "readonly");
+                        chatcontentline.append(copyarea);
+                        copyarea.select();
+                        document.execCommand("copy");
+                        chatcontentline.removeChild(copyarea);
+                    }
+                });
+            } else {
+                var copyarea = document.createElement("textarea");
+                copyarea.style.width = 0;
+                copyarea.style.height = 0;
+                copyarea.value = copycontent;
+                copyarea.setAttribute("readonly", "readonly");
+                chatcontentline.append(copyarea);
+                copyarea.select();
+                document.execCommand("copy");
+                chatcontentline.removeChild(copyarea);
+            }
+        });
+        chatcontentline.append(chatcontentcopy);
+    }
     var send = function(content) {
         document.getElementsByClassName("chatcontents")[0].style.height = "calc(100% - 60px - 36px)";
         document.getElementsByClassName("chatcontents")[0].style.maxHeight = "calc(100% - 60px - 36px)";
         document.getElementsByClassName("chatcontents")[0].style.minHeight = "calc(100% - 60px - 36px)";
-        document.getElementsByClassName("loading")[0].style.display = "block";
+        document.getElementsByClassName("loading")[0].style.display = "inline-block";
         var precontent = new Array();
         for (var i in precontents) {
             precontent.push(precontents[i]);
         }
         precontent.push(content);
-        var request = new Request("/chat/chat/", {method: "POST", body: JSON.stringify(precontent)});
+        var request = new Request("chat/", {method: "POST", body: JSON.stringify(precontent)});
         fetch(request).then((response) => response.text()).then((res) => {
             var chatcontent = document.createElement("div");
             chatcontent.className = "chatcontent you";
@@ -106,45 +176,12 @@
             chatcontentline.append(chatcontent);
             var chatcontents = document.getElementsByClassName("chatcontents")[0];
             chatcontents.append(chatcontentline);
-            var chatcontentcopy = document.createElement("div");
-            chatcontentcopy.className = "chatcontentcopy";
-            chatcontentcopy.innerHTML = "📋";
-            chatcontentcopy.addEventListener("click", function(){
-                var copycontent = chatcontent.innerText.replace(/[\r\n]+/g, "\n").trim();
-                if (navigator.clipboard && navigator.permissions) {
-                    navigator.permissions.query({name: "clipboard-write"}).then((result) => {
-                        if (result.state == "granted") {
-                            navigator.clipboard.writeText(copycontent);
-                        } else {
-                            var copyarea = document.createElement("textarea");
-                            copyarea.style.width = 0;
-                            copyarea.style.height = 0;
-                            copyarea.value = copycontent;
-                            copyarea.setAttribute("readonly", "readonly");
-                            chatcontentline.append(copyarea);
-                            copyarea.select();
-                            document.execCommand("copy");
-                            chatcontentline.removeChild(copyarea);
-                        }
-                    });
-                } else {
-                    var copyarea = document.createElement("textarea");
-                    copyarea.style.width = 0;
-                    copyarea.style.height = 0;
-                    copyarea.value = copycontent;
-                    copyarea.setAttribute("readonly", "readonly");
-                    chatcontentline.append(copyarea);
-                    copyarea.select();
-                    document.execCommand("copy");
-                    chatcontentline.removeChild(copyarea);
-                }
-            });
-            chatcontentline.append(chatcontentcopy);
+            addcopybtn(chatcontent, chatcontentline, "left");
             reqcnt--;
             if (reqcnt <= 0) {
-                document.getElementsByClassName("chatcontents")[0].style.height = "calc(100% - 60px)";
-                document.getElementsByClassName("chatcontents")[0].style.maxHeight = "calc(100% - 60px)";
-                document.getElementsByClassName("chatcontents")[0].style.minHeight = "calc(100% - 60px)";
+                document.getElementsByClassName("chatcontents")[0].style.height = "calc(100% - 60px - 36px)";
+                document.getElementsByClassName("chatcontents")[0].style.maxHeight = "calc(100% - 60px - 36px)";
+                document.getElementsByClassName("chatcontents")[0].style.minHeight = "calc(100% - 60px - 36px)";
                 document.getElementsByClassName("loading")[0].style.display = "none";
             }
             chatcontents.scrollTo(0, chatcontents.scrollHeight);
@@ -153,6 +190,8 @@
         });
     }
     var submit = function() {
+        document.getElementsByClassName("help")[0].style.display = "none";
+        document.getElementsByClassName("donation")[0].style.display = "none";
         var submitcontent = document.getElementsByClassName("content")[0];
         var submitcontentvalue = submitcontent.value;
         if (submitcontentvalue.trim() == "" || submitcontentvalue.length > 1000) {
@@ -167,6 +206,7 @@
         chatcontentline.append(chatcontent);
         var chatcontents = document.getElementsByClassName("chatcontents")[0];
         chatcontents.append(chatcontentline);
+        addcopybtn(chatcontent, chatcontentline, "right");
         reqcnt++;
         submitcontent.value = "";
         send(submitcontentvalue);
@@ -182,11 +222,36 @@
             submit();
         }
     });
+    document.getElementsByClassName("help-btn")[0].addEventListener("click", function() {
+        document.getElementsByClassName("donation")[0].style.display = "none";
+        document.getElementsByClassName("help")[0].style.display = "block";
+    });
+    document.getElementsByClassName("donation-btn")[0].addEventListener("click", function() {
+        document.getElementsByClassName("help")[0].style.display = "none";
+        document.getElementsByClassName("donation")[0].style.display = "block";
+    });
+    Array.from(document.getElementsByClassName("close-btn")).forEach(function(el) {
+        el.addEventListener("click", function() {
+            document.getElementsByClassName("help")[0].style.display = "none";
+            document.getElementsByClassName("donation")[0].style.display = "none";
+        });
+    });
+    Array.from(document.getElementsByClassName("tip")).forEach(function(el) {
+        el.addEventListener("click", function() {
+            document.getElementsByClassName("content")[0].value = el.innerText;
+            submit();
+        });
+    });
     document.getElementsByClassName("content")[0].focus();
     window.addEventListener("resize", function() {
         var chatcontents = document.getElementsByClassName("chatcontents")[0];
         chatcontents.scrollTo(0, chatcontents.scrollHeight);
     });
+    var img = new Image();
+    img.src = "static/wxalipay-s.png";
+    img.onload = function () {
+        document.getElementsByClassName("code")[0].style.backgroundImage = "url(" + img.src + ")";
+    }
 </script>
 </body>
 </html>
